@@ -15,4 +15,13 @@ Os canais de sódio e potássio são dependentes da voltagem, e o canal leak nã
 A partir disso, a corrente elétrica pode ser descrita com a seguinte equação
 diferencial:
 
-![Equação Da corrente total](https://latex.codecogs.com/png.image?\dpi{110}&space;I_{total}&space;=&space;C_m&space;\frac{dV_m}{dt}&space;&plus;&space;g_K&space;(V_m-V_K)&space;&plus;&space;g_{Na}(V_m-V_{Na})&space;&plus;&space;g_L(V_m-V_L))
+![Equação da corrente total I](https://latex.codecogs.com/png.image?\dpi{110}&space;\bg_white&space;I_{total}&space;=&space;C_m&space;\frac{dV_m}{dt}&space;&plus;&space;g_K&space;[V_m-V_K]&space;&plus;&space;g_{Na}[V_m-V_{Na}]&space;&plus;&space;g_L[V_m-V_L])
+
+Como os canais dependentes da voltagem não ficam num mesmo estado ao decorrer
+do tempo, temos que o valor da resistência (g<sub>n</sub>) pode ser descrito
+a partir de um valor máximo e a proporção de canais abertos, que em si é dado
+por Alpha e Beta dependente da voltagem.
+
+![Equação da corrente total II](<img src="https://latex.codecogs.com/png.image?\dpi{110}&space;\bg_white&space;I_{total}=C_m&space;\frac{dV_m}{dt}&plus;\overline{g_K}n^4[V_m-V_K]&plus;\overline{g_{Na}}m^3h[V_m-V_{Na}]&plus;g_L[V_m-V_L]" title="\bg_white I_{total}=C_m \frac{dV_m}{dt}+\overline{g_K}n^4[V_m-V_K]+\overline{g_{Na}}m^3h[V_m-V_{Na}]+g_L[V_m-V_L]" />)
+
+![m, n, h](<img src="https://latex.codecogs.com/png.image?\dpi{110}&space;\bg_white&space;\frac{dn}{dt}&space;=&space;\alpha_n(V_m)[1-n]&space;-&space;\beta_n(V_m)[n]&space;\\&space;\\\frac{dm}{dt}&space;=&space;\alpha_m(V_m)[1-m]&space;-&space;\beta_m(V_m)[m]&space;\\&space;\\\frac{dh}{dt}&space;=&space;\alpha_h(V_m)[1-h]&space;-&space;\beta_h(V_m)[h]&space;\\&space;\\" title="\bg_white \frac{dn}{dt} = \alpha_n(V_m)[1-n] - \beta_n(V_m)[n] \\ \\\frac{dm}{dt} = \alpha_m(V_m)[1-m] - \beta_m(V_m)[m] \\ \\\frac{dh}{dt} = \alpha_h(V_m)[1-h] - \beta_h(V_m)[h] \\ \\" />)
