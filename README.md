@@ -24,4 +24,6 @@ por Alpha e Beta dependente da voltagem.
 
 ![Equação da corrente total II](https://latex.codecogs.com/png.image?\dpi{110}&space;\bg_white&space;I_{total}=C_m\frac{dV_m}{dt}&plus;\overline{g_K}n^4[V_m-V_K]&plus;\overline{g_{Na}}m^3h[V_m-V_{Na}]&plus;g_L[V_m-V_L])
 
-![m, n, h](https://latex.codecogs.com/png.image?\dpi{110}&space;\bg_white&space;\frac{dn}{dt}&space;=&space;\alpha_n(V_m)[1-n]&space;-&space;\beta_n(V_m)[n]&space;\\&space;\\&space;\frac{dm}{dt}&space;=&space;\alpha_m(V_m)[1-m]&space;-&space;\beta_m(V_m)[m]&space;\\&space;\\&space;\frac{dh}{dt}&space;=&space;\alpha_h(V_m)[1-h]&space;-&space;\beta_h(V_m)[h]&space;\\&space;\\)
+![m](https://latex.codecogs.com/png.image?\dpi{110}&space;\bg_white&space;\frac{dn}{dt}&space;=&space;\alpha_n(V_m)[1-n]&space;-&space;\beta_n(V_m)[n])
+![n](https://latex.codecogs.com/png.image?\dpi{110}&space;\bg_white&space;\frac{dm}{dt}&space;=&space;\alpha_m(V_m)[1-m]&space;-&space;\beta_m(V_m)[m])
+![h](https://latex.codecogs.com/png.image?\dpi{110}&space;\bg_white&space;\frac{dh}{dt}&space;=&space;\alpha_h(V_m)[1-h]&space;-&space;\beta_h(V_m)[h])
