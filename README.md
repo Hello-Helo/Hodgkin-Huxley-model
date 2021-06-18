@@ -8,7 +8,9 @@ Nobel de medicina em 1963.
 Os pulsos nervosos nas células são modelados aproximando a membrana celular pr
 um capacitor, separando as cargas iônicas, os canais inônicos são aproximados
 por resistores e o podencial de deslocamento dos íons são geradores.
-Os canais de sódio e potássio são dependentes da voltagem, e o canal leak não.
+Os canais *leak* são constantes, e a corrente que passa por eles não dependem
+do tempo, já os canais de sódio e potássio abrem e fecham de acordo com a
+voltagem.
 
 ![Esquema do circuíto](figures/circuit.png)
 
