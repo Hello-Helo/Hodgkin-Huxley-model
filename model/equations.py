@@ -35,6 +35,14 @@ def gen_actv(alpha, beta, voltage):
         return a
     return actv
 
+# Defining V(t) from current
+
+def gen_volt(n, m, h, i):
+    def volt(x,t):
+        a = (i-g_K*(n**4)*(x-v_K)-g_Na*(m**3)*h*(x-v_Na)-g_l*(x-v_l))/c
+        return a
+    return volt
+
 # Main ####
 
 # Max conductance
