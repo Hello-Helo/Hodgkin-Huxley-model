@@ -29,6 +29,7 @@ def beta_h(voltage):
 
 # main
 
+# Max conductance
 g_K = 0
 g_Na = 0
 g_l = 0
