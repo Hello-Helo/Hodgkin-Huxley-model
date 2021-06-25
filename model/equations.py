@@ -1,5 +1,8 @@
 import numpy as np
 
+
+# Defining parameters Alpha and Beta
+
 def alpha_n(voltage):
     a = (0.01*(10+voltage))/(np.exp((10+voltage)/10)-1)
     return a
@@ -23,3 +26,9 @@ def beta_m(voltage):
 def beta_h(voltage):
     b = 1/(np.exp((30+voltage)/10)+1)
     return b
+
+# main
+
+g_K = 0
+g_Na = 0
+g_l = 0
