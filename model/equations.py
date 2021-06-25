@@ -27,7 +27,15 @@ def beta_h(voltage):
     b = 1/(np.exp((30+voltage)/10)+1)
     return b
 
-# main
+# Defining activations parameters
+
+def gen_actv(alpha, beta, voltage):
+    def actv(x,t):
+        a = alpha(voltage)*(1-x) - beta(voltage)*x
+        return a
+    return actv
+
+# Main ####
 
 # Max conductance
 g_K = 0
