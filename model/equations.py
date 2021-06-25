@@ -49,3 +49,11 @@ def gen_volt(n, m, h, i):
 g_K = 0
 g_Na = 0
 g_l = 0
+
+# Channel voltages
+v_K = 0
+v_Na = 0
+v_l = 0
+
+# Capacitance of the manbrane
+c = 0
