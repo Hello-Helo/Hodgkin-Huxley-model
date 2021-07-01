@@ -1,5 +1,5 @@
 import numpy as np
-from ode-solutions import runge_kutta
+from ode_solutions import runge_kutta
 
 # Defining parameters Alpha and Beta
 
@@ -45,17 +45,19 @@ def gen_volt(n, m, h, i):
 
 # Main ####
 
-# Max conductance
-g_K = 0
-g_Na = 0
-g_l = 0
+# Max conductance (m * mho / cm^2)
+g_K = 36
+g_Na = 120
+g_l = 0.3
 
-# Channel voltages
-v_K = 0
-v_Na = 0
-v_l = 0
+# Channel voltages (mV)
+v_K = 12
+v_Na = -115
+v_l = -10.613
 
-# Capacitance of the manbrane
-c = 0
+# Capacitance of the manbrane (mF / cm^2)
+c = 1.
 
-a = runge_kutta()
+# NEED:
+# find n, m, h
+# find voltage
