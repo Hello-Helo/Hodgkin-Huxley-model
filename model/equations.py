@@ -1,5 +1,5 @@
 import numpy as np
-
+from ode-solutions import runge_kutta
 
 # Defining parameters Alpha and Beta
 
@@ -57,3 +57,5 @@ v_l = 0
 
 # Capacitance of the manbrane
 c = 0
+
+a = runge_kutta()
