@@ -1,3 +1,5 @@
+from matplotlib import pyplot as plt
+
 # ODE solving algorithim
 
 def runge_kutta(f_prime, x, n, interval):
@@ -15,3 +17,13 @@ def runge_kutta(f_prime, x, n, interval):
         t = (i + 1)*h
         points.append((t,x))
     return points
+
+# Main
+
+def derivative(t,x):
+    a = x * (1. - x/2)
+    return a
+
+interval = (0,30)
+plt.plot(list(zip(*runge_kutta(derivative, 0, 100, interval))),"ro")
+plt.show()
