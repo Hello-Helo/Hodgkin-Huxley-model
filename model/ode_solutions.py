@@ -30,14 +30,13 @@ def euler(f_prime, x, n, interval):
         points.append((t,x))
     return points
 
-# Main
+if __name__ == "__main__":
+    def derivative(t,x):
+        a = 0.3 * x * (1. - x/100.)
+        return a
 
-def derivative(t,x):
-    a = 0.3 * x * (1. - x/100.)
-    return a
-
-interval = (0,30)
-# print(runge_kutta(derivative, 10, 100, interval))
-plt.plot(*zip(*runge_kutta(derivative, 10, 10000, interval)))
-plt.plot(*zip(*euler(derivative, 10, 10000, interval)))
-plt.show()
+    interval = (0,30)
+    # print(runge_kutta(derivative, 10, 100, interval))
+    plt.plot(*zip(*runge_kutta(derivative, 10, 10000, interval)))
+    plt.plot(*zip(*euler(derivative, 10, 10000, interval)))
+    plt.show()
