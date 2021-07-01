@@ -1,4 +1,5 @@
 import numpy as np
+from matplotlib import pyplot as plt
 from ode_solutions import runge_kutta
 
 # Defining parameters Alpha and Beta
@@ -51,13 +52,49 @@ g_Na = 120
 g_l = 0.3
 
 # Channel voltages (mV)
-v_K = 12
-v_Na = -115
-v_l = -10.613
+v_K = 12 * 10**(-3)
+v_Na = -115 * 10**(-3)
+v_l = -10.613 * 10**(-3)
 
 # Capacitance of the manbrane (mF / cm^2)
 c = 1.
 
+# Initial value
+n = 0
+m = 0
+h = 1
+
 # NEED:
 # find n, m, h
 # find voltage
+
+voltage = -60 * 10**(-3)
+i = 1 * 10**(-3)
+t0 = 0
+t = t0
+tf = 10
+step_number = 1000
+
+step_size = (tf-t0)/step_number
+volt_graph = [(t0, voltage)]
+
+for step in range(0,step_number):
+    interval = (t, t + step_size)
+    n_prime = gen_actv(alpha_n, beta_n, voltage)
+    m_prime = gen_actv(alpha_m, beta_m, voltage)
+    h_prime = gen_actv(alpha_h, beta_h, voltage)
+
+    n = runge_kutta(n_prime, n, 1, interval)[-1][1]
+    m = runge_kutta(m_prime, m, 1, interval)[-1][1]
+    h = runge_kutta(h_prime, h, 1, interval)[-1][1]
+
+    volt_prime = gen_volt(n, m, m, i)
+    volt = runge_kutta(volt_prime, voltage, 1, interval)[-1]
+    print(volt)
+    volt_graph.append(volt)
+
+    voltage = volt[1]
+    t = t + step_size
+
+plt.plot(*zip(*volt_graph))
+plt.show()
