@@ -46,10 +46,10 @@ def gen_volt(n, m, h, i):
 
 # Main ####
 
-# Max conductance (m * mho / cm^2)
-g_K = 36
-g_Na = 120
-g_l = 0.3
+# Max conductance (m / cm^2)
+g_K = 36 * 10**(-3)
+g_Na = 120 * 10**(-3)
+g_l = 0.3 * 10**(-3)
 
 # Channel voltages (mV)
 v_K = 12 * 10**(-3)
@@ -57,7 +57,7 @@ v_Na = -115 * 10**(-3)
 v_l = -10.613 * 10**(-3)
 
 # Capacitance of the manbrane (mF / cm^2)
-c = 1.
+c = 1. * 10**(-3)
 
 # Initial value
 n = 0
