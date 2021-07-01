@@ -47,33 +47,33 @@ def gen_volt(n, m, h, i):
 # Main ####
 
 # Max conductance (m / cm^2)
-g_K = 36 * 10**(-3)
-g_Na = 120 * 10**(-3)
-g_l = 0.3 * 10**(-3)
+g_K = 36
+g_Na = 120
+g_l = 0.3
 
 # Channel voltages (mV)
-v_K = 12 * 10**(-3)
-v_Na = -115 * 10**(-3)
-v_l = -10.613 * 10**(-3)
+v_K = -77
+v_Na = 50
+v_l = -54.387
 
 # Capacitance of the manbrane (mF / cm^2)
-c = 1. * 10**(-3)
+c = 1.
 
 # Initial value
-n = 0
-m = 0
-h = 1
+m = 0.05
+n = 0.32
+h = 0.6
 
 # NEED:
 # find n, m, h
 # find voltage
 
-voltage = -60 * 10**(-3)
-i = 1 * 10**(-3)
+voltage = -65
+i = 10
 t0 = 0
 t = t0
-tf = 10
-step_number = 1000
+tf = 450
+step_number = 10000
 
 step_size = (tf-t0)/step_number
 volt_graph = [(t0, voltage)]
@@ -90,7 +90,7 @@ for step in range(0,step_number):
 
     volt_prime = gen_volt(n, m, m, i)
     volt = runge_kutta(volt_prime, voltage, 1, interval)[-1]
-    print(volt)
+    # print(volt)
     volt_graph.append(volt)
 
     voltage = volt[1]
