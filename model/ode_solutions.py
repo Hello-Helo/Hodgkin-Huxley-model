@@ -14,7 +14,7 @@ def runge_kutta(f_prime, x, n, interval):
         k3 = f_prime(t+0.5*h, x+0.5*k2)
         k4 = f_prime(t+h, x+h*k3)
         x = x + h/6*(k1+2*k2+2*k3+k4)
-        t = (i + 1)*h
+        t = t0 + (i + 1)*h
         points.append((t,x))
     return points
 
@@ -36,7 +36,9 @@ if __name__ == "__main__":
         return a
 
     interval = (0,30)
+    interval1 = (0,3)
     # print(runge_kutta(derivative, 10, 100, interval))
-    plt.plot(*zip(*runge_kutta(derivative, 10, 10000, interval)))
-    plt.plot(*zip(*euler(derivative, 10, 10000, interval)))
+    plt.plot(*zip(*runge_kutta(derivative, 10, 10, interval1)))
+    plt.plot(*zip(*runge_kutta(derivative, 10, 100, interval)))
+    # plt.plot(*zip(*euler(derivative, 10, 1, interval)))
     plt.show()
