@@ -1,4 +1,5 @@
 from matplotlib import pyplot as plt
+import numpy as np
 
 # ODE solving algorithim
 
@@ -9,10 +10,10 @@ def runge_kutta(f_prime, x, n, interval):
     h = (tf-t0)/n
     points = [(t,x)]
     for i in range(0,n):
-        k1 = f_prime(t,x)
-        k2 = f_prime(t+0.5*h, x+0.5*k1)
-        k3 = f_prime(t+0.5*h, x+0.5*k2)
-        k4 = f_prime(t+h, x+h*k3)
+        k1 = np.array(f_prime(t,x))
+        k2 = np.array(f_prime(t+0.5*h, x+0.5*k1*h))
+        k3 = np.array(f_prime(t+0.5*h, x+0.5*k2*h))
+        k4 = np.array(f_prime(t+h, x+h*k3))
         x = x + h/6*(k1+2*k2+2*k3+k4)
         t = t0 + (i + 1)*h
         points.append((t,x))
@@ -25,7 +26,7 @@ def euler(f_prime, x, n, interval):
     h = (tf-t0)/n
     points = [(t,x)]
     for i in range(0,n):
-        x = x + h*f_prime(t,x)
+        x = x + h*np.array(f_prime(t,x))
         t = (i + 1)*h
         points.append((t,x))
     return points
