@@ -1,31 +1,31 @@
 import numpy as np
 from matplotlib import pyplot as plt
-from ode_solutions import runge_kutta
+from ode_solutions import runge_kutta, euler
 
 # Defining parameters Alpha and Beta
 
 def alpha_n(voltage):
-    a = (0.01*(10+voltage))/(np.exp((10+voltage)/10)-1)
+    a = (0.01*(55+voltage))/(1-np.exp(-(55+voltage)/10))
     return a
 
 def alpha_m(voltage):
-    a = (0.1*(25+voltage))/(np.exp((25+voltage)/10)-1)
+    a = (0.1*(40+voltage))/(1-np.exp(-(40+voltage)/10))
     return a
 
 def alpha_h(voltage):
-    a = 0.07*np.exp(voltage/20)
+    a = 0.07*np.exp(-(voltage+65)/20)
     return a
 
 def beta_n(voltage):
-    b = 0.125*np.exp(voltage/80)
+    b = 0.125*np.exp(-(voltage+65)/80)
     return b
 
 def beta_m(voltage):
-    b = 4*np.exp(voltage/18)
+    b = 4*np.exp(-(voltage+65)/18)
     return b
 
 def beta_h(voltage):
-    b = 1/(np.exp((30+voltage)/10)+1)
+    b = 1/(np.exp(-(35+voltage)/10)+1)
     return b
 
 # Defining activations parameters
@@ -52,17 +52,17 @@ g_Na = 120
 g_l = 0.3
 
 # Channel voltages (mV)
-v_K = -12
-v_Na = 115
-v_l = -10.613
+v_K = -77
+v_Na = 50
+v_l = -54.387
 
 # Capacitance of the manbrane (mF / cm^2)
 c = 1.
 
 # Initial value
-m = 0.05
-n = 0.32
-h = 0.6
+m0 = 0.05
+n0 = 0.32
+h0 = 0.6
 
 # NEED:
 # find n, m, h
@@ -73,10 +73,12 @@ i = 10
 t0 = 0
 t = t0
 tf = 10
-step_number = 100
+step_number = 1000
 
 step_size = (tf-t0)/step_number
 volt_graph = [(t0, voltage)]
+
+to_graph = []
 
 for step in range(0,step_number):
     interval = (t, t + step_size)
@@ -84,11 +86,14 @@ for step in range(0,step_number):
     m_prime = gen_actv(alpha_m, beta_m, voltage)
     h_prime = gen_actv(alpha_h, beta_h, voltage)
 
-    n = runge_kutta(n_prime, n, 1, interval)[-1][1]
-    m = runge_kutta(m_prime, m, 1, interval)[-1][1]
-    h = runge_kutta(h_prime, h, 1, interval)[-1][1]
+    n = runge_kutta(n_prime, n0, 1, interval)[-1]
+    m = runge_kutta(m_prime, m0, 1, interval)[-1]
+    h = runge_kutta(h_prime, h0, 1, interval)[-1]
 
-    volt_prime = gen_volt(n, m, h, i)
+    to_graph.append(n)
+    n0, m0, h0 = n[1], m[1], h[1]
+
+    volt_prime = gen_volt(n[1], m[1], h[1], i)
     volt = runge_kutta(volt_prime, voltage, 1, interval)[-1]
     # print(volt)
     volt_graph.append(volt)
@@ -97,4 +102,5 @@ for step in range(0,step_number):
     t = t + step_size
 
 plt.plot(*zip(*volt_graph))
+# plt.plot(*zip(*to_graph))
 plt.show()
