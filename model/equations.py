@@ -33,7 +33,7 @@ def beta_h(voltage):
 def gen_actv(alpha, beta, voltage):
     def actv(x,t):
         xi = alpha(voltage)/(alpha(voltage) + beta(voltage))
-        Ti = alpha(voltage) + beta(voltage)
+        Ti = 1/(alpha(voltage) + beta(voltage))
         a = (xi - x)/Ti
         return a
     return actv
