@@ -52,9 +52,9 @@ g_Na = 120
 g_l = 0.3
 
 # Channel voltages (mV)
-v_K = -77
-v_Na = 50
-v_l = -54.387
+v_K = -12
+v_Na = 115
+v_l = -10.613
 
 # Capacitance of the manbrane (mF / cm^2)
 c = 1.
@@ -72,8 +72,8 @@ voltage = -65
 i = 10
 t0 = 0
 t = t0
-tf = 450
-step_number = 10000
+tf = 10
+step_number = 100
 
 step_size = (tf-t0)/step_number
 volt_graph = [(t0, voltage)]
@@ -88,7 +88,7 @@ for step in range(0,step_number):
     m = runge_kutta(m_prime, m, 1, interval)[-1][1]
     h = runge_kutta(h_prime, h, 1, interval)[-1][1]
 
-    volt_prime = gen_volt(n, m, m, i)
+    volt_prime = gen_volt(n, m, h, i)
     volt = runge_kutta(volt_prime, voltage, 1, interval)[-1]
     # print(volt)
     volt_graph.append(volt)
