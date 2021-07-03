@@ -32,7 +32,9 @@ def beta_h(voltage):
 
 def gen_actv(alpha, beta, voltage):
     def actv(x,t):
-        a = alpha(voltage)*(1-x) - beta(voltage)*x
+        xi = alpha(voltage)/(alpha(voltage) + beta(voltage))
+        Ti = alpha(voltage) + beta(voltage)
+        a = (xi - x)/Ti
         return a
     return actv
 
@@ -72,14 +74,15 @@ voltage = -65
 i = 10
 t0 = 0
 t = t0
-tf = 450
-step_number = 10000
+tf = 10
+step_number = 60000
 
 step_size = (tf-t0)/step_number
 volt_graph = [(t0, voltage)]
 
 for step in range(0,step_number):
     interval = (t, t + step_size)
+    if step == 30000: i = 0
     n_prime = gen_actv(alpha_n, beta_n, voltage)
     m_prime = gen_actv(alpha_m, beta_m, voltage)
     h_prime = gen_actv(alpha_h, beta_h, voltage)
@@ -87,10 +90,11 @@ for step in range(0,step_number):
     n = runge_kutta(n_prime, n, 1, interval)[-1][1]
     m = runge_kutta(m_prime, m, 1, interval)[-1][1]
     h = runge_kutta(h_prime, h, 1, interval)[-1][1]
+    
 
     volt_prime = gen_volt(n, m, m, i)
     volt = runge_kutta(volt_prime, voltage, 1, interval)[-1]
-    # print(volt)
+    #print(volt)
     volt_graph.append(volt)
 
     voltage = volt[1]
