@@ -30,21 +30,16 @@ def beta_h(voltage):
     b = 1/(np.exp(-(35+voltage)/10)+1)
     return b
 
-# Defining activations parameters
+def gen_dalldt(i):
+    def dalldt(t,x):
+        voltage,n,m,h = x
+        dvdt = (i-g_K*(n**4)*(voltage-v_K)-g_Na*(m**3)*h*(voltage-v_Na)-g_l*(voltage-v_l))/c
+        dndt = alpha_n(voltage)*(1-n) - beta_n(voltage)*n
+        dmdt = alpha_m(voltage)*(1-m) - beta_m(voltage)*m
+        dhdt = alpha_h(voltage)*(1-h) - beta_h(voltage)*h
 
-def gen_actv(alpha, beta, voltage):
-    def actv(x,t):
-        a = alpha(voltage)*(1-x) - beta(voltage)*x
-        return a
-    return actv
-
-# Defining V(t) from current
-
-def gen_volt(n, m, h, i):
-    def volt(x,t):
-        a = (i-g_K*(n**4)*(x-v_K)-g_Na*(m**3)*h*(x-v_Na)-g_l*(x-v_l))/c
-        return a
-    return volt
+        return dvdt, dndt, dmdt, dhdt
+    return dalldt
 
 # Main ####
 
@@ -71,66 +66,23 @@ h0 = 0.6
 # find voltage
 
 voltage = -65
-i = 2
+i = 6
 t0 = 0
 t = t0
 tf = 10
-step_number = 1000
 
-step_size = (tf-t0)/step_number
-volt_graph = [(t0, voltage)]
-
-to_graph_n = []
-to_graph_m = []
-to_graph_h = []
-
-for step in range(0,step_number):
-    # interval = (t, t + step_size)
-    # n_prime = gen_actv(alpha_n, beta_n, voltage)
-    # m_prime = gen_actv(alpha_m, beta_m, voltage)
-    # h_prime = gen_actv(alpha_h, beta_h, voltage)
-
-    # n = runge_kutta(n_prime, n0, 1, interval)[-1]
-    # m = runge_kutta(m_prime, m0, 1, interval)[-1]
-    # h = runge_kutta(h_prime, h0, 1, interval)[-1]
-
-    # to_graph_n.append(n)
-    # to_graph_m.append(m)
-    # to_graph_h.append(h)
-    # n0, m0, h0 = n[1], m[1], h[1]
-
-    # volt_prime = gen_volt(n[1], m[1], h[1], i)
-    # volt = runge_kutta(volt_prime, voltage, 1, interval)[-1]
-    # # print(volt)
-    # volt_graph.append(volt)
-
-    # voltage = volt[1]
-    # t = t + step_size
-    pass
-
-def dalldt(t,x):
-    voltage,n,m,h = x
-    dvdt = (i-g_K*(n**4)*(voltage-v_K)-g_Na*(m**3)*h*(voltage-v_Na)-g_l*(voltage-v_l))/c
-    dndt = alpha_n(voltage)*(1-n) - beta_n(voltage)*n
-    dmdt = alpha_m(voltage)*(1-m) - beta_m(voltage)*m
-    dhdt = alpha_h(voltage)*(1-h) - beta_h(voltage)*h
-
-    return dvdt, dndt, dmdt, dhdt
-
+# Time interval
 t= (0,450)
 
-# result = solve_ivp(dalldt, t, [voltage, n0, m0, h0])
+result = runge_kutta(gen_dalldt(i), np.array([voltage, n0, m0, h0]), 100000, t)
 
-result = runge_kutta(dalldt, np.array([voltage, n0, m0, h0]), 1000, t)
-
-# print(result)
-
+# The results in np.array form
 time = result[:,0]
-
 voltage_result = result[:,1]
 n_result = result[:,2]
 m_result = result[:,3]
 p_result = result[:,4]
 
+# Plotting
 plt.plot(time, voltage_result)
 plt.show()
