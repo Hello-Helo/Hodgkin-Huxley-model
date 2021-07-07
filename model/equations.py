@@ -1,7 +1,12 @@
 import numpy as np
 import scipy as sp
 from scipy.integrate import solve_ivp
+
 from matplotlib import pyplot as plt
+import matplotlib.animation as animation
+
+from pathlib import Path
+
 from ode_solutions import runge_kutta, euler
 
 # Defining parameters Alpha and Beta
@@ -66,23 +71,53 @@ h0 = 0.6
 # find voltage
 
 voltage = -65
-i = 6
 t0 = 0
 t = t0
 tf = 10
 
 # Time interval
-t= (0,450)
+t = (0,300)
 
-result = runge_kutta(gen_dalldt(i), np.array([voltage, n0, m0, h0]), 100000, t)
+i0 = -1
+ifinal = 10
+i_steps = 100
+i = np.linspace(i0, ifinal, num=i_steps, endpoint=False)
 
+def run_and_save():
+    result = [runge_kutta(gen_dalldt(current), np.array([voltage, n0, m0, h0]), 5000, t) for current in i]
+    save_location = Path("cache/")
+    if not save_location.exists():
+        save_location.mkdir()
+    np.save(save_location / f"result", result)
+    return result
+
+def load():
+    return np.load(Path("cache/") / f"result.npy")
+
+result = load()
+
+column = 1
+
+fig, ax = plt.subplots()
+axis_sizes = [(-85, 60), (-0.15, 1.15), (-0.15, 1.15), (-0.15, 1.15)]
+plt.ylim(axis_sizes[column-1])
+
+graph_line, = ax.plot(result[0][:,0], result[0][:,column])
+
+def animate(current):
+    graph_line.set_ydata(result[current][:,column])
+    return graph_line,
+
+ani = animation.FuncAnimation(fig, animate, interval=40, blit=True, frames=range(i_steps))
+
+'''
 # The results in np.array form
-time = result[:,0]
-voltage_result = result[:,1]
-n_result = result[:,2]
-m_result = result[:,3]
-p_result = result[:,4]
+time = result[0][:,0]
+voltage_result = result[0][:,1]
+n_result = result[0][:,2]
+m_result = result[0][:,3]
+p_result = result[0][:,4]
+'''
 
 # Plotting
-plt.plot(time, voltage_result)
 plt.show()
