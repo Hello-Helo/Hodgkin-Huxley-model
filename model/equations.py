@@ -71,7 +71,7 @@ h0 = 0.6
 # find voltage
 
 voltage = -65
-i = 0.1
+i = 2
 t0 = 0
 t = t0
 tf = 10
@@ -123,30 +123,14 @@ t= (0,450)
 
 result = runge_kutta(dalldt, np.array([voltage, n0, m0, h0]), 1000, t)
 
-print(result)
+# print(result)
 
-# time = result[0]
-# voltage_result = result[1][0]
-# n_result = result[1][0]
-# m_result = result[1][1]
-# p_result = result[1][2]
+time = result[:,0]
 
-# plt.plot(time, voltage)
+voltage_result = result[:,1]
+n_result = result[:,2]
+m_result = result[:,3]
+p_result = result[:,4]
 
-# Result formating: (tempo, [voltagem, n, m, h])
-#   volt_t = (tempo, voltagem)
-#   n_t = (tempo, n)
-#   m_t = (tempo, m)
-#   h_t = (tempo, h)
-
-
-# V=result.y[0,:]
-# print(result.y[0,:])
-# print(result.y)
-# plt.plot(result.t,V)
-
-# plt.plot(*zip(*volt_graph))
-# plt.plot(*zip(*to_graph_n))
-# plt.plot(*zip(*to_graph_m))
-# plt.plot(*zip(*to_graph_h))
+plt.plot(time, voltage_result)
 plt.show()
