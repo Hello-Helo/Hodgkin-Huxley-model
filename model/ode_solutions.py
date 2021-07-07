@@ -8,7 +8,7 @@ def runge_kutta(f_prime, x, n, interval):
     tf = interval[1]
     t = t0
     h = (tf-t0)/n
-    points = [(t,x)]
+    points = [np.array([t,*x])]
     for i in range(0,n):
         k1 = np.array(f_prime(t,x))
         k2 = np.array(f_prime(t+0.5*h, x+0.5*k1*h))
@@ -16,8 +16,8 @@ def runge_kutta(f_prime, x, n, interval):
         k4 = np.array(f_prime(t+h, x+h*k3))
         x = x + h/6*(k1+2*k2+2*k3+k4)
         t = t0 + (i + 1)*h
-        points.append((t,x))
-    return points
+        points.append(np.concatenate(([t],x)))
+    return np.vstack(points)
 
 def euler(f_prime, x, n, interval):
     t0 = interval[0]
