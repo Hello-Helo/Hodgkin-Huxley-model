@@ -48,17 +48,17 @@ def gen_dalldt(i):
 
 def run_and_save():
     if name_space.euler == True:
-        result = [euler(gen_dalldt(i), np.array([voltage, n0, m0, h0]), 5000, t) for i in i_list]
+        result = [euler(gen_dalldt(i), np.array([voltage, n0, m0, h0]), int(5000 * max(1, t[1]/300)), t) for i in i_list]
     else:
-        result = [runge_kutta(gen_dalldt(i), np.array([voltage, n0, m0, h0]), 5000, t) for i in i_list]
+        result = [runge_kutta(gen_dalldt(i), np.array([voltage, n0, m0, h0]), int(5000 * max(1, t[1]/300)), t) for i in i_list]
     save_location = Path("cache/")
     if not save_location.exists():
         save_location.mkdir()
-    np.save(save_location / f"result", result)
+    np.save(save_location / f"result-{['runge_kutta','euler'][int(name_space.euler)]}-tf{name_space.final_time}", result)
     return result
 
 def load():
-    return np.load(Path("cache/") / f"result.npy")
+    return np.load(Path("cache/") / f"result-{['runge_kutta','euler'][int(name_space.euler)]}-tf{name_space.final_time}.npy")
 
 def animate(i):
     graph_line.set_ydata(result[i][:,column])
@@ -71,9 +71,16 @@ parser = argparse.ArgumentParser(description='Hodgkin-Huxley Model')
 
 parser.add_argument("-tf", "--final-time", type=int, action="store", default=300, help="Tempo final da análise")
 
-group = parser.add_mutually_exclusive_group(required=True)
-group.add_argument("-E", "--euler", action="store_true", help="Utilizar o método de Euler")
-group.add_argument("-R", "--runge-kutta", action="store_true", help="Utilizar o método de Runge-Kutta")
+
+method_group = parser.add_mutually_exclusive_group(required=True)
+method_group.add_argument("-E", "--euler", action="store_true", help="Utilizar o método de Euler")
+method_group.add_argument("-R", "--runge-kutta", action="store_true", help="Utilizar o método de Runge-Kutta")
+
+graph_group = parser.add_mutually_exclusive_group()
+graph_group.add_argument("-V", "--graph-voltage", action="store_true", help="Criar grafico da voltagem")
+graph_group.add_argument("-N", "--graph-n", action="store_true", help="Criar grafico do n")
+graph_group.add_argument("-M", "--graph-m", action="store_true", help="Criar grafico do m")
+graph_group.add_argument("-H", "--graph-h", action="store_true", help="Criar grafico do h")
 
 name_space = parser.parse_args()
 
@@ -110,10 +117,13 @@ ifinal = 10
 i_steps = 100
 i_list = np.linspace(i0, ifinal, num=i_steps, endpoint=False)
 
-run_and_save()
-result = load()
+try:
+    result = load()
+except IOError:
+    run_and_save()
+    result = load()
 
-column = 1
+column = 1 + int(name_space.graph_n) + 2*int(name_space.graph_m) + 3*int(name_space.graph_h)
 
 # Plotting
 
@@ -127,6 +137,6 @@ text = plt.text(25, 47, "")
 
 ani = animation.FuncAnimation(fig, animate, interval=60, blit=True, frames=range(i_steps))
 
-plt.ylabel("Voltagem (mV)")
+plt.ylabel(["Voltagem (mV)", "n (0-1)", "m (0-1)", "h (0-1)"][column-1])
 plt.xlabel("Tempo (ms)")
 plt.show()
