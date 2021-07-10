@@ -24,12 +24,12 @@ def euler(f_prime, x, n, interval):
     tf = interval[1]
     t = t0
     h = (tf-t0)/n
-    points = [(t,x)]
+    points = [np.array([t,*x])]
     for i in range(0,n):
         x = x + h*np.array(f_prime(t,x))
         t = (i + 1)*h
-        points.append((t,x))
-    return points
+        points.append(np.concatenate(([t],x)))
+    return np.vstack(points)
 
 if __name__ == "__main__":
     def derivative(t,x):
