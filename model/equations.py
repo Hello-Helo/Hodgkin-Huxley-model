@@ -1,6 +1,4 @@
 import numpy as np
-import scipy as sp
-from scipy.integrate import solve_ivp
 
 from matplotlib import pyplot as plt
 import matplotlib.animation as animation
@@ -8,6 +6,8 @@ import matplotlib.animation as animation
 from pathlib import Path
 
 from ode_solutions import runge_kutta, euler
+
+import argparse
 
 # Defining parameters Alpha and Beta
 
@@ -46,7 +46,36 @@ def gen_dalldt(i):
         return dvdt, dndt, dmdt, dhdt
     return dalldt
 
+def run_and_save():
+    if name_space.euler == True:
+        result = [euler(gen_dalldt(i), np.array([voltage, n0, m0, h0]), 5000, t) for i in i_list]
+    else:
+        result = [runge_kutta(gen_dalldt(i), np.array([voltage, n0, m0, h0]), 5000, t) for i in i_list]
+    save_location = Path("cache/")
+    if not save_location.exists():
+        save_location.mkdir()
+    np.save(save_location / f"result", result)
+    return result
+
+def load():
+    return np.load(Path("cache/") / f"result.npy")
+
+def animate(i):
+    graph_line.set_ydata(result[i][:,column])
+    text.set_text(f"Corrente = {round(i_list[i], 2)} mA")
+    return graph_line,text,
+
 # Main ####
+
+parser = argparse.ArgumentParser(description='Hodgkin-Huxley Model')
+
+parser.add_argument("-tf", "--final-time", type=int, action="store", default=300, help="Tempo final da análise")
+
+group = parser.add_mutually_exclusive_group(required=True)
+group.add_argument("-E", "--euler", action="store_true", help="Utilizar o método de Euler")
+group.add_argument("-R", "--runge-kutta", action="store_true", help="Utilizar o método de Runge-Kutta")
+
+name_space = parser.parse_args()
 
 # Max conductance (m / cm^2)
 g_K = 36
@@ -71,32 +100,22 @@ h0 = 0.6
 # find voltage
 
 voltage = -65
-t0 = 0
-t = t0
-tf = 10
 
 # Time interval
-t = (0,300)
+tf = name_space.final_time
+t = (0,tf)
 
 i0 = -1
 ifinal = 10
 i_steps = 100
-i = np.linspace(i0, ifinal, num=i_steps, endpoint=False)
+i_list = np.linspace(i0, ifinal, num=i_steps, endpoint=False)
 
-def run_and_save():
-    result = [runge_kutta(gen_dalldt(current), np.array([voltage, n0, m0, h0]), 5000, t) for current in i]
-    save_location = Path("cache/")
-    if not save_location.exists():
-        save_location.mkdir()
-    np.save(save_location / f"result", result)
-    return result
-
-def load():
-    return np.load(Path("cache/") / f"result.npy")
-
+run_and_save()
 result = load()
 
 column = 1
+
+# Plotting
 
 fig, ax = plt.subplots()
 axis_sizes = [(-85, 60), (-0.15, 1.15), (-0.15, 1.15), (-0.15, 1.15)]
@@ -104,20 +123,10 @@ plt.ylim(axis_sizes[column-1])
 
 graph_line, = ax.plot(result[0][:,0], result[0][:,column])
 
-def animate(current):
-    graph_line.set_ydata(result[current][:,column])
-    return graph_line,
+text = plt.text(25, 47, "")
 
-ani = animation.FuncAnimation(fig, animate, interval=40, blit=True, frames=range(i_steps))
+ani = animation.FuncAnimation(fig, animate, interval=60, blit=True, frames=range(i_steps))
 
-'''
-# The results in np.array form
-time = result[0][:,0]
-voltage_result = result[0][:,1]
-n_result = result[0][:,2]
-m_result = result[0][:,3]
-p_result = result[0][:,4]
-'''
-
-# Plotting
+plt.ylabel("Voltagem (mV)")
+plt.xlabel("Tempo (ms)")
 plt.show()
