@@ -9,6 +9,8 @@ from ode_solutions import runge_kutta, euler
 
 import argparse
 
+import multiprocessing as mp
+
 # Defining parameters Alpha and Beta
 
 def alpha_n(voltage):
@@ -46,11 +48,19 @@ def gen_dalldt(i):
         return dvdt, dndt, dmdt, dhdt
     return dalldt
 
+def run_method(data):
+    method, index, args = data
+    return index, method(args[0](index), *args[1:])
+
 def run_and_save():
+    mp_p = mp.Pool(processes = num_processors)
     if name_space.euler == True:
-        result = [euler(gen_dalldt(i), np.array([voltage, n0, m0, h0]), int(5000 * max(1, t[1]/300)), t) for i in i_list]
+        result = [output[1] for output in sorted(mp_p.map(run_method, [(euler, i, (gen_dalldt, np.array([voltage, n0, m0, h0]), int(5000 * max(1, t[1]/300)), t)) for i in i_list]), key = lambda x: x[0])]
+        #result = [euler(gen_dalldt(i), np.array([voltage, n0, m0, h0]), int(5000 * max(1, t[1]/300)), t) for i in i_list]
     else:
-        result = [runge_kutta(gen_dalldt(i), np.array([voltage, n0, m0, h0]), int(5000 * max(1, t[1]/300)), t) for i in i_list]
+        result = [output[1] for output in sorted(mp_p.map(run_method, [(runge_kutta, i, (gen_dalldt, np.array([voltage, n0, m0, h0]), int(5000 * max(1, t[1]/300)), t)) for i in i_list]), key = lambda x: x[0])]
+        #result = [runge_kutta(gen_dalldt(i), np.array([voltage, n0, m0, h0]), int(5000 * max(1, t[1]/300)), t) for i in i_list]
+    mp_p.close()
     save_location = Path("cache/")
     if not save_location.exists():
         save_location.mkdir()
@@ -66,23 +76,6 @@ def animate(i):
     return graph_line,text,
 
 # Main ####
-
-parser = argparse.ArgumentParser(description='Hodgkin-Huxley Model')
-
-parser.add_argument("-tf", "--final-time", type=int, action="store", default=300, help="Tempo final da análise")
-
-
-method_group = parser.add_mutually_exclusive_group(required=True)
-method_group.add_argument("-E", "--euler", action="store_true", help="Utilizar o método de Euler")
-method_group.add_argument("-R", "--runge-kutta", action="store_true", help="Utilizar o método de Runge-Kutta")
-
-graph_group = parser.add_mutually_exclusive_group()
-graph_group.add_argument("-V", "--graph-voltage", action="store_true", help="Criar grafico da voltagem")
-graph_group.add_argument("-N", "--graph-n", action="store_true", help="Criar grafico do n")
-graph_group.add_argument("-M", "--graph-m", action="store_true", help="Criar grafico do m")
-graph_group.add_argument("-H", "--graph-h", action="store_true", help="Criar grafico do h")
-
-name_space = parser.parse_args()
 
 # Max conductance (m / cm^2)
 g_K = 36
@@ -108,35 +101,54 @@ h0 = 0.6
 
 voltage = -65
 
-# Time interval
-tf = name_space.final_time
-t = (0,tf)
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description='Hodgkin-Huxley Model')
 
-i0 = -1
-ifinal = 10
-i_steps = 100
-i_list = np.linspace(i0, ifinal, num=i_steps, endpoint=False)
+    parser.add_argument("-tf", "--final-time", type=int, action="store", default=300, help="Tempo final da análise")
 
-try:
-    result = load()
-except IOError:
-    run_and_save()
-    result = load()
 
-column = 1 + int(name_space.graph_n) + 2*int(name_space.graph_m) + 3*int(name_space.graph_h)
+    method_group = parser.add_mutually_exclusive_group(required=True)
+    method_group.add_argument("-E", "--euler", action="store_true", help="Utilizar o método de Euler")
+    method_group.add_argument("-R", "--runge-kutta", action="store_true", help="Utilizar o método de Runge-Kutta")
 
-# Plotting
+    graph_group = parser.add_mutually_exclusive_group()
+    graph_group.add_argument("-V", "--graph-voltage", action="store_true", help="Criar grafico da voltagem")
+    graph_group.add_argument("-N", "--graph-n", action="store_true", help="Criar grafico do n")
+    graph_group.add_argument("-M", "--graph-m", action="store_true", help="Criar grafico do m")
+    graph_group.add_argument("-H", "--graph-h", action="store_true", help="Criar grafico do h")
 
-fig, ax = plt.subplots()
-axis_sizes = [(-85, 60), (-0.15, 1.15), (-0.15, 1.15), (-0.15, 1.15)]
-plt.ylim(axis_sizes[column-1])
+    name_space = parser.parse_args()
 
-graph_line, = ax.plot(result[0][:,0], result[0][:,column])
+    # Time interval
+    tf = name_space.final_time
+    t = (0,tf)
 
-text = plt.text(25, 47, "")
+    i0 = -1
+    ifinal = 10
+    i_steps = 100
+    i_list = np.linspace(i0, ifinal, num=i_steps, endpoint=False)
 
-ani = animation.FuncAnimation(fig, animate, interval=60, blit=True, frames=range(i_steps))
+    num_processors = int(mp.cpu_count() / 2)
 
-plt.ylabel(["Voltagem (mV)", "n (0-1)", "m (0-1)", "h (0-1)"][column-1])
-plt.xlabel("Tempo (ms)")
-plt.show()
+    try:
+        result = load()
+    except IOError:
+        result = run_and_save()
+
+    column = 1 + int(name_space.graph_n) + 2*int(name_space.graph_m) + 3*int(name_space.graph_h)
+
+    # Plotting
+
+    fig, ax = plt.subplots()
+    axis_sizes = [(-85, 60), (-0.15, 1.15), (-0.15, 1.15), (-0.15, 1.15)]
+    plt.ylim(axis_sizes[column-1])
+
+    graph_line, = ax.plot(result[0][:,0], result[0][:,column])
+
+    text = plt.text(25 * tf/450, 47, "")
+
+    ani = animation.FuncAnimation(fig, animate, interval=60, blit=True, frames=range(i_steps))
+
+    plt.ylabel(["Voltagem (mV)", "n (0-1)", "m (0-1)", "h (0-1)"][column-1])
+    plt.xlabel("Tempo (ms)")
+    plt.show()
